@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {ethers} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import {provider} from "./provider";
+import Balance from "./Balance";
 
 interface IProps {
     walletAddress: string;
@@ -25,22 +26,24 @@ const daiAbi = [
 const ContractBalance = ({walletAddress, contractAddress}: IProps) => {
 
     const [symbol, setSymbol] = useState<string | undefined>();
-    const [displayBal, setDisplayBal] = useState<string | undefined>();
+    const [displayBal, setDisplayBal] = useState<BigNumber | undefined>();
 
     const getBalance = (address: string) => {
         const contract = new ethers.Contract(contractAddress, daiAbi, provider);
         contract.symbol().then(setSymbol)
-        contract.balanceOf(address).then((bal: any) => setDisplayBal(ethers.utils.formatEther(bal)));
+        contract.balanceOf(address).then((bal: any) => setDisplayBal(bal));
     }
 
     useEffect(() => {
         getBalance(walletAddress);
     }, []);
 
+    if (!symbol) {
+        return <>Loading...</>
+    }
+
     return (
-        <div>
-            ${symbol}: {displayBal || "Loading..."}
-        </div>
+        <Balance symbol={symbol} balance={displayBal} />
     )
 }
 

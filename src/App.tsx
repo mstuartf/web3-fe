@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
-import Balance from "./Balance";
+import EthBalance from "./EthBalance";
 import ContractBalance from "./ContractBalance";
 import {provider} from "./provider";
+import Btn from "./Btn";
 
 function App() {
 
@@ -37,24 +38,36 @@ function App() {
 
   if (!walletAddress) {
       return (
-          <button onClick={() => {
-              setIsConnecting(true);
-              connectWallet();
-          }}>
-              Connect wallet
-          </button>
+          <div className="h-full w-full flex items-center justify-center pb-20 text-gray-700">
+              <div className="w-full max-w-2xl shadow p-8 grid grid-cols-1 gap-4">
+                  <div className="text-center">
+                      No wallet connected. Connect your Metamask wallet?
+                  </div>
+              <div className="flex justify-center">
+                  <Btn onClick={() => {
+                      setIsConnecting(true);
+                      connectWallet();
+                  }}>
+                      Connect wallet
+                  </Btn>
+              </div>
+              </div>
+          </div>
       )
   }
 
   return (
-    <div>
-      <div>
-        Your wallet address is: {walletAddress}
-      </div>
-      <Balance
-          walletAddress={walletAddress}
-      />
-        <div>
+    <div className="h-full w-full flex items-center justify-center pb-20 text-gray-700">
+      <div className="w-full max-w-2xl shadow p-8 grid grid-cols-1 gap-4">
+          <div>
+              Your wallet address is: <span className="font-bold">{walletAddress}</span>
+          </div>
+          <div>
+              Balances:
+          </div>
+          <EthBalance
+              walletAddress={walletAddress}
+          />
           {contractAddresses.map(add => (
               <ContractBalance
                   key={add}
@@ -62,23 +75,26 @@ function App() {
                   contractAddress={add}
               />
           ))}
-        </div>
-        <div>
-          <input
-              value={newContractAddress}
-              onChange={({target: {value}})=> setNewContractAddress(value)}
-          />
-          <button
-            onClick={() => {
-              setContractAddresses([
-                  ...contractAddresses,
-                  newContractAddress
-              ]);
-              setNewContractAddress("");
-            }}>
-            Show balance
-          </button>
-        </div>
+          <div className="flex">
+              <input
+                  placeholder="Enter contract address..."
+                  className="max-w-sm shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  value={newContractAddress}
+                  onChange={({target: {value}})=> setNewContractAddress(value)}
+              />
+              <div className="px-2" />
+              <Btn
+                  onClick={() => {
+                      setContractAddresses([
+                          ...contractAddresses,
+                          newContractAddress
+                      ]);
+                      setNewContractAddress("");
+                  }}>
+                  Check token balance
+              </Btn>
+          </div>
+      </div>
     </div>
   );
 }
