@@ -9,19 +9,41 @@ function App() {
   const [walletAddress, setWalletAddress] = useState<string | undefined>();
   const [newContractAddress, setNewContractAddress] = useState<string>("");
   const [contractAddresses, setContractAddresses] = useState<string[]>([]);
+  const [isConnecting, setIsConnecting] = useState<boolean>(true);
 
   const connectWallet = () => {
-    provider.send("eth_requestAccounts", []).then(res => {
-      setWalletAddress(res[0]);
-    });
+    provider.send("eth_requestAccounts", [])
+        .then(accounts => {
+            setWalletAddress(accounts[0]);
+            setIsConnecting(false);
+        })
+        .catch(() => setIsConnecting(false));
   }
 
   useEffect(() => {
-    connectWallet();
-  }, []);
+      provider.listAccounts()
+          .then(accounts => {
+              if (!!accounts.length) {
+                  setWalletAddress(accounts[0]);
+              }
+              setIsConnecting(false);
+          })
+          .catch(() => setIsConnecting(false));
+  }, [])
+
+  if (isConnecting) {
+    return <>Loading...</>
+  }
 
   if (!walletAddress) {
-    return <>Loading...</>
+      return (
+          <button onClick={() => {
+              setIsConnecting(true);
+              connectWallet();
+          }}>
+              Connect wallet
+          </button>
+      )
   }
 
   return (
