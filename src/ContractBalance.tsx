@@ -8,6 +8,7 @@ interface IProps {
     contractAddress: string;
 }
 
+// these are the ERC-20 contract methods?
 const daiAbi = [
     // Some details about the token
     "function name() view returns (string)",

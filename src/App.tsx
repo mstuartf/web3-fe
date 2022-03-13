@@ -4,6 +4,7 @@ import EthBalance from "./EthBalance";
 import ContractBalance from "./ContractBalance";
 import {provider} from "./provider";
 import Btn from "./Btn";
+import SendEth from "./SendEth";
 
 function App() {
 
@@ -94,6 +95,8 @@ function App() {
                   Check token balance
               </Btn>
           </div>
+          <div className="my-4 border" />
+          <SendEth />
       </div>
     </div>
   );
