@@ -20,7 +20,7 @@ const SendEth = () => {
         const signer = provider.getSigner();
         // todo: does this prompt you to confirm in metamask too?
         signer.sendTransaction({
-            to: "ricmoo.firefly.eth",
+            to: destination,
             value: parseEther(amount)
         })
             .then(tx => {
