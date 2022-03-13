@@ -5,6 +5,10 @@ import ContractBalance from "./ContractBalance";
 import {provider} from "./provider";
 import Btn from "./Btn";
 import SendEth from "./SendEth";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+import Input from "./Input";
+
 
 function App() {
 
@@ -77,7 +81,7 @@ function App() {
               />
           ))}
           <div className="flex">
-              <input
+              <Input
                   placeholder="Enter contract address..."
                   className="max-w-sm shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   value={newContractAddress}
@@ -98,6 +102,7 @@ function App() {
           <div className="my-4 border" />
           <SendEth />
       </div>
+      <ToastContainer />
     </div>
   );
 }

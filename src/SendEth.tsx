@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import Btn from "./Btn";
 import {provider} from "./provider";
-import {BigNumber, ethers} from "ethers";
+import {BigNumber} from "ethers";
 import {parseEther} from "ethers/lib/utils";
 import Balance from "./Balance";
+import { toast } from 'react-toastify';
+import Input from "./Input";
 
 const SendEth = () => {
 
@@ -11,28 +13,40 @@ const SendEth = () => {
     const [destination, setDestination] = useState<string>("");
     const [gasFees, setGasFees] = useState<BigNumber | undefined>();
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const send = () => {
+        setIsLoading(true);
         const signer = provider.getSigner();
+        // todo: does this prompt you to confirm in metamask too?
         signer.sendTransaction({
             to: "ricmoo.firefly.eth",
             value: parseEther(amount)
         })
             .then(tx => {
                 console.log(tx.blockHash);
+                toast.success(`Transaction succeeded: ${tx.blockHash}`)
+                setIsLoading(false);
             })
             .catch(e => {
-                console.log(e.message);
+                toast.error(e.message)
+                setIsLoading(false);
             });
     }
 
     const estimateGas = () => {
+        setIsLoading(true);
         provider.estimateGas({
             to: destination,
             value: parseEther(amount)
         })
-            .then(res => setGasFees(res))
+            .then(res => {
+                setGasFees(res);
+                setIsLoading(false);
+            })
             .catch(e => {
-                console.log(e.message);
+                toast.error(e.message)
+                setIsLoading(false);
             });
     }
 
@@ -45,7 +59,8 @@ const SendEth = () => {
                 <div className="text-left flex items-center">
                     Amount
                 </div>
-                <input
+                <Input
+                    disabled={isLoading}
                     className="max-w-sm shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={amount}
                     type="number"
@@ -57,7 +72,8 @@ const SendEth = () => {
                 <div className="text-left flex items-center">
                     Destination
                 </div>
-                <input
+                <Input
+                    disabled={isLoading}
                     className="max-w-sm shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     value={destination}
                     type="string"
@@ -77,14 +93,14 @@ const SendEth = () => {
                 </div>
                 <div className="flex">
                     <Btn
-                        disabled={!amount || !destination}
+                        disabled={!amount || !destination || isLoading}
                         onClick={estimateGas}
                     >
                         Estimate gas
                     </Btn>
                     <div className="px-1" />
                     <Btn
-                        disabled={!amount || !destination || !gasFees}
+                        disabled={!amount || !destination || !gasFees || isLoading}
                         onClick={send}
                     >
                         Send
